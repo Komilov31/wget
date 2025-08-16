@@ -42,7 +42,14 @@ func (p *Parser) ProcessUrl(urlString string) error {
 	if err != nil {
 		log.Fatal("unable to resolve host address:", url)
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	}()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {

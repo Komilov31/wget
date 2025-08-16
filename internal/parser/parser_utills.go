@@ -54,7 +54,10 @@ func (p *Parser) saveAllResourses(parsedUrl *url.URL, resp io.Reader) {
 				log.Println("could not save CSS:", err)
 				return
 			}
-			files.SaveFile(url, data)
+			err = files.SaveFile(url, data)
+			if err != nil {
+				log.Println("could not save file: ", err)
+			}
 		}
 	})
 
@@ -78,7 +81,11 @@ func (p *Parser) saveAllResourses(parsedUrl *url.URL, resp io.Reader) {
 				log.Println("could not save JS:", err)
 				return
 			}
-			files.SaveFile(url, data)
+
+			err = files.SaveFile(url, data)
+			if err != nil {
+				log.Println("could not save file: ", err)
+			}
 		}
 	})
 
@@ -102,7 +109,11 @@ func (p *Parser) saveAllResourses(parsedUrl *url.URL, resp io.Reader) {
 				log.Println("could not save Image:", err)
 				return
 			}
-			files.SaveFile(url, data)
+
+			err = files.SaveFile(url, data)
+			if err != nil {
+				log.Println("could not save file: ", err)
+			}
 		}
 	})
 
@@ -126,7 +137,11 @@ func (p *Parser) saveAllResourses(parsedUrl *url.URL, resp io.Reader) {
 				log.Println("could not save icon:", err)
 				return
 			}
-			files.SaveFile(url, data)
+
+			err = files.SaveFile(url, data)
+			if err != nil {
+				log.Println("could not save file: ", err)
+			}
 		}
 	})
 }
@@ -137,7 +152,12 @@ func (p *Parser) getData(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -214,7 +234,10 @@ func (p *Parser) ParseAllUrls(urlString string, urls chan string, curDepth int) 
 				}
 
 				urls <- href
-				p.ParseAllUrls(href, urls, curDepth+1)
+				err := p.ParseAllUrls(href, urls, curDepth+1)
+				if err != nil {
+					log.Println("could not parse urls: ", err)
+				}
 			}
 		}
 	})
