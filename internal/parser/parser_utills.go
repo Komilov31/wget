@@ -234,10 +234,7 @@ func (p *Parser) ParseAllUrls(urlString string, urls chan string, curDepth int) 
 				}
 
 				urls <- href
-				err := p.ParseAllUrls(href, urls, curDepth+1)
-				if err != nil {
-					log.Println("could not parse urls: ", err)
-				}
+				_ = p.ParseAllUrls(href, urls, curDepth+1)
 			}
 		}
 	})
